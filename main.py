@@ -10,6 +10,8 @@ JOKE = (
     "the demo with a screenshot of the demo and took a bow."
 )
 
+ENTRY_PATH = Path("/output/entry.txt")
+
 
 def validate_entry(text: str) -> None:
     """The gate: 1-280 Unicode code points, not only white space."""
@@ -21,11 +23,12 @@ def validate_entry(text: str) -> None:
 
 def main() -> None:
     validate_entry(JOKE)
-    out_dir = Path("/output")
-    out_dir.mkdir(parents=True, exist_ok=True)
-    entry_path = out_dir / "entry.txt"
-    entry_path.write_text(JOKE, encoding="utf-8")
-    validate_entry(entry_path.read_text(encoding="utf-8"))
+    ENTRY_PATH.parent.mkdir(parents=True, exist_ok=True)
+    ENTRY_PATH.write_text(JOKE, encoding="utf-8")
+    written = ENTRY_PATH.read_bytes()
+    if written != JOKE.encode("utf-8"):
+        raise ValueError("written bytes do not match JOKE")
+    validate_entry(ENTRY_PATH.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
